@@ -3,7 +3,7 @@ name: Docker Build and Push
 on:
   push:
     branches:
-      - master  # or your branch name
+      - master
   pull_request:
 
 jobs:
@@ -35,12 +35,11 @@ jobs:
           sed -i "s|image: .*$|image: ${{ secrets.DOCKER_USERNAME }}/2048-game:${{ github.run_id }}|" kubernetes/deployment.yaml
 
       - name: Commit and push updated deployment.yaml
+        env:
+          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           git config user.name "sijomt"
           git config user.email "sijomthomas05@gmail.com"
           git add kubernetes/deployment.yaml
-          git commit -m "chore: update image tag to ${{ github.run_id }}"
-          git push
-        env:
-          # Required if GitHub token is not picked up automatically
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          git diff --cached --quiet && echo "No changes to commit." || git commit -m "chore: update image tag to ${{ github.run_id }}"
+          git push https://x-access-token:${PAT}@github.com/${{ github.repository }} HEAD:master
