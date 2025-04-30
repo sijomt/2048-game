@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: 2048-game
-          image: sijomt/2048-game:14727337181
+          image: sijomt/2048-game:14749321653
           ports:
             - containerPort: 80
